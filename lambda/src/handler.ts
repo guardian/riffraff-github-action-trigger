@@ -34,21 +34,20 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
       `Sending workflow dispatch to ${repo} for revision ${vcsRevision}`
     );
 
-    await octokit.actions
+    const response = await octokit.actions
       .createWorkflowDispatch({
         owner: GITHUB_OWNER,
         repo: repo,
         ref: payload.vcsRevision as string,
         workflow_id: (WORKFLOW_NAME as unknown) as number
       })
-      .then(({ status, url, data }) => {
-        console.log(`Workflow dispatch status ${status} for URL ${url}`);
-        return lambdaResponse(status, JSON.stringify(data));
-      })
       .catch(err => {
         console.error("Octokit error:", err.message, err.status);
-        return lambdaResponse(404, err.message);
+        throw new Error(`Octokit error: ${err.message}`);
       });
+    const { status, url, data } = response;
+    console.log(`Workflow dispatch status ${status} for URL ${url}`);
+    return lambdaResponse(status, JSON.stringify({ ...data, url, status }));
   } catch (e) {
     console.error("ERROR: ", e);
     return lambdaResponse(200, `Failed to handle payload: ${e.message}`);
