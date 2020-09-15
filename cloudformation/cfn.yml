@@ -61,7 +61,7 @@ Resources:
       Description: Lambda triggering GitHub Actions from RiffRaff
       MemorySize: '256'
       Timeout: '30'
-      Handler: src/handler.handler
+      Handler: build/src/handler.handler
       Role: !GetAtt 'RiffRaffGitHubActionRole.Arn'
       Runtime: nodejs12.x
       Tags:
