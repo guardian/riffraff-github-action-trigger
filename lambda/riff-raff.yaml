@@ -1,10 +1,10 @@
 regions: [eu-west-1]
-stacks: [media-service]
+stacks: [flexible]
 deployments:
   riffraff-github-action-trigger:
     type: aws-lambda
     parameters:
-      bucket: media-service-dist
+      bucket: composer-dist
       prefixStack: false
       fileName: riffraff-github-action-trigger.zip
       functionNames:
