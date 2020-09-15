@@ -46,7 +46,14 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
         return lambdaResponse(status, data);
       })
       .catch(err => console.error("Error", err.message, err.status));
-    return lambdaResponse(200);
+    return lambdaResponse(
+      200,
+      {
+        success: true,
+        repo,
+        payload
+      }.toString()
+    );
   } catch (e) {
     console.error("ERROR: ", e);
     return lambdaResponse(200, `Failed to handle payload: ${e.message}`);
