@@ -43,16 +43,19 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
       })
       .then(({ status, url, data }) => {
         console.log(`Workflow dispatch status ${status} for URL ${url}`);
-        return lambdaResponse(status, data);
+        return lambdaResponse(status, JSON.stringify(data));
       })
-      .catch(err => console.error("Error", err.message, err.status));
+      .catch(err => {
+        console.error("Octokit error:", err.message, err.status);
+        return lambdaResponse(404, err.message);
+      });
     return lambdaResponse(
       200,
-      {
+      JSON.stringify({
         success: true,
         repo,
         payload
-      }.toString()
+      })
     );
   } catch (e) {
     console.error("ERROR: ", e);
