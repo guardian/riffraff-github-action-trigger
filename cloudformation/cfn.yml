@@ -4,6 +4,7 @@ Parameters:
   GitHubToken:
     Description: GitHub token with repo and workflow permissions
     Type: String
+    NoEcho: true
   Stack:
     Type: String
     Description: Name of the stack

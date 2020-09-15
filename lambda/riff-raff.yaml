@@ -15,5 +15,5 @@ deployments:
     parameters:
       prependStackToCloudFormationStackName: false
       cloudFormationStackName: riffraff-github-action-trigger
-      templatePath: cfn.yaml
+      templatePath: cfn.yml
       cloudFormationStackByTags: false
