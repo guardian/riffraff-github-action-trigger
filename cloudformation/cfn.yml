@@ -68,3 +68,36 @@ Resources:
         - { Key: Stack, Value: !Ref Stack }
         - { Key: Stage, Value: !Ref Stage }
         - { Key: App, Value: riffraff-github-action-trigger }
+  ApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "RiffRaff GitHub Action API Gateway"
+      Description: "Gateway for RiffRaff to make POST requests to"
+
+  ApiGatewayRootMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations"
+          - lambdaArn: !GetAtt "RiffRaffGitHubActionLambdaFunction.Arn"
+      ResourceId: !GetAtt "ApiGateway.RootResourceId"
+      RestApiId: !Ref "ApiGateway"
+
+  ApiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn:
+      - "ApiGatewayRootMethod"
+    Properties:
+      RestApiId: !Ref "ApiGateway"
+      StageName: !Ref "Stage"
+Outputs:
+  apiGatewayInvokeURL:
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+
+  lambdaArn:
+    Value: !GetAtt "RiffRaffGitHubActionLambdaFunction.Arn"
