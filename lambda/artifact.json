@@ -1,0 +1,16 @@
+{
+  "projectName": "riffraff-github-action-trigger",
+  "vcsURL": "https://github.com/guardian/riffraff-github-action-trigger",
+  "actions": [
+    {
+      "action": "riffraff-github-action-trigger",
+      "path": "./",
+      "compress": "zip"
+    },
+    {
+      "action": "cloudformation",
+      "path": "../cloudformation/cfn.yml",
+      "compress": false
+    }
+  ]
+}

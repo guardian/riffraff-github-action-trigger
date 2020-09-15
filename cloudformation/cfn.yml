@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: RiffRaff GitHub Action Trigger
+Parameters:
+  GitHubToken:
+    Description: GitHub token with repo and workflow permissions
+    Type: String
+  Stage:
+    Description: Stage
+    Type: String
+    Default: CODE
+    AllowedValues:
+      - CODE
+      - PROD
+  LoggingRoleToAssumeArn:
+    Type: String
+    Description: Name of IAM role in logging account e.g. arn:aws:iam::222222222222:role/LoggingRole
+Resources:
+  RiffRaffGitHubActionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: RiffRaffGitHubAction
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - cloudwatch:PutMetricData
+                Resource: "*"
+              - Action:
+                  - s3:GetObject
+                Effect: Allow
+                Resource:
+                  - !Sub ['arn:aws:s3:::${ConfigBucket}/${Stage}/riffraff-github-action-trigger/conf.json', {Stage: !Ref 'Stage'}]
+              - Resource: !Ref 'LoggingRoleToAssumeArn'
+                Effect: Allow
+                Action: sts:AssumeRole
+  RiffRaffGitHubActionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'riffraff-github-action-trigger-function-${Stage}'
+      Environment:
+        Variables:
+          GITHUB_TOKEN: !Ref GitHubToken
+      Code:
+        S3Bucket: media-service-dist
+        S3Key: !Sub 'media-service/${Stage}/riffraff-github-action-trigger/riffraff-github-action-trigger.zip'
+      Description: Lambda triggering GitHub Actions from RiffRaff
+      MemorySize: '256'
+      Timeout: '30'
+      Handler: src/handler.handler
+      Role: !GetAtt 'RiffRaffGitHubActionRole.Arn'
+      Runtime: nodejs12.x
+      Tags:
+        - { Key: Stack, Value: media-service }
+        - { Key: Stage, Value: !Ref Stage }
+        - { Key: App, Value: riffraff-github-action-trigger }

@@ -1,0 +1,40 @@
+{
+  "name": "riffraff-github-action-trigger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@octokit/rest": "^18.0.6",
+    "@types/jest": "^24.0.23"
+  },
+  "devDependencies": {
+    "@guardian/node-riffraff-artifact": "^0.1.9",
+    "@types/aws-lambda": "^8.10.34",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "eslint": "^7.0.0",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.7.2"
+  },
+  "scripts": {
+    "compile": "tsc --outDir ./build",
+    "test": "jest --passWithNoTests --silent",
+    "lint": "eslint src/*",
+    "lint:fix": "eslint --fix src/*",
+    "deploy": "yarn compile && node-riffraff-artifact"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/?(*.)+(spec|test).[jt]s?(x)"
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
+  },
+  "license": "MIT"
+}
