@@ -49,14 +49,6 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
         console.error("Octokit error:", err.message, err.status);
         return lambdaResponse(404, err.message);
       });
-    return lambdaResponse(
-      200,
-      JSON.stringify({
-        success: true,
-        repo,
-        payload
-      })
-    );
   } catch (e) {
     console.error("ERROR: ", e);
     return lambdaResponse(200, `Failed to handle payload: ${e.message}`);
