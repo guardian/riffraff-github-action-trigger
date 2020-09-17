@@ -30,17 +30,20 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
 
     const arr = vcsUrl.split("/");
     const repo = arr[arr.length - 1];
+    const params = {
+      owner: GITHUB_OWNER,
+      repo: repo,
+      event_type: "riffraff",
+      client_payload: { ref: vcsRevision, build: payload.build }
+    };
     console.log(
       `Sending workflow dispatch to ${repo} for revision ${vcsRevision}`
     );
 
+    console.log("params:", params);
+
     const response = await octokit.repos
-      .createDispatchEvent({
-        owner: GITHUB_OWNER,
-        repo: repo,
-        event_type: "riffraff",
-        client_payload: { ref: vcsRevision, build: payload.build }
-      })
+      .createDispatchEvent(params)
       .catch(err => {
         console.error("Octokit error:", err.message, err.status);
         throw new Error(`Octokit error: ${err.message}`);
