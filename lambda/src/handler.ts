@@ -23,8 +23,8 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
   try {
     const payload: RiffRaffHook = JSON.parse(event.body);
     console.log("payload from RiffRaff:", payload);
-    const { vcsRevision, vcsUrl, branch } = payload;
-    if (!vcsRevision || !vcsUrl || !branch) {
+    const { vcsRevision, vcsUrl } = payload;
+    if (!vcsRevision || !vcsUrl) {
       throw new Error("No VCS revision and/or URL in payload, aborting");
     }
 
@@ -48,18 +48,6 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
         throw new Error(`Octokit error: ${err.message}`);
       });
 
-    // const response = await octokit.actions
-    //   .createWorkflowDispatch({
-    //     owner: GITHUB_OWNER,
-    //     repo: repo,
-    //     ref: payload.vcsRevision as string,
-    //     workflow_id: (WORKFLOW_NAME as unknown) as number,
-    //     inputs: { "git-ref": vcsRevision }
-    //   })
-    //   .catch(err => {
-    //     console.error("Octokit error:", err.message, err.status);
-    //     throw new Error(`Octokit error: ${err.message}`);
-    //   });
     const { status, url, data } = response;
     console.log(`Workflow dispatch status ${status} for URL ${url}`);
     return lambdaResponse(status, JSON.stringify({ ...data, url, status }));
