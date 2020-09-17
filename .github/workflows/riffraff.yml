@@ -1,5 +1,7 @@
 name: Greet Everyone
-on: [repository_dispatch]
+on:
+  repository_dispatch:
+    types: [riffraff]
 
 jobs:
   build:
