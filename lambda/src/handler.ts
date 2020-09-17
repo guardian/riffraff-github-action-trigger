@@ -3,7 +3,6 @@ import { APIGatewayEvent } from "aws-lambda";
 import * as I from "./interfaces";
 import { lambdaResponse } from "./utils";
 
-const WORKFLOW_NAME = "riffraff.yml";
 const GITHUB_OWNER = "guardian";
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
