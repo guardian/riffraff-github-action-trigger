@@ -30,20 +30,22 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
       throw new Error("No VCS revision/URL/deployer in payload, aborting");
     }
 
+    const arr = vcsUrl.split("/");
+    const repo = arr[arr.length - 1].replace(".git", "");
+
     if (
       ["scheduled deployment", "continuous deployment"].includes(
         deployer.toLowerCase()
       )
     ) {
-      console.log(`Deploy comes from automated process, not triggering GHA`);
+      console.log(
+        `[${repo}] Deploy ${vcsRevision} from ${vcsUrl} comes from automated process [${deployer}], not triggering GHA`
+      );
       return lambdaResponse(
         200,
         `Deploy comes from automated process, not triggering GHA`
       );
     }
-
-    const arr = vcsUrl.split("/");
-    const repo = arr[arr.length - 1].replace(".git", "");
     const params = {
       owner: GITHUB_OWNER,
       repo: repo,
