@@ -33,9 +33,9 @@ jobs:
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'RiffRaff Deploy'
-          description: 'BUILD_ID'
+          description: ${{ github.event.client_payload.build }}
           state: 'success'
-          target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions"
+          target_url: "https://github.com/guardian/<REPO>/actions"
           sha: ${{ github.event.client_payload.ref }}
       - name: Update commit status (FAILURE)
         if: ${{ failure() }}
@@ -43,9 +43,14 @@ jobs:
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'RiffRaff Deploy'
-          description: 'BUILD_ID'
+          description: ${{ github.event.client_payload.build }}
           state: 'failure'
+          target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions/runs/${{ github.run_id }}"
           sha: ${{ github.event.client_payload.ref }}
-
-
 ```
+
+3. Add a secret to your repo called `GITHUB_TOKEN`. This will be used in the Workflow to grant permissions to update a commit status.
+
+### Why not use `worfklow_dispatch`?
+
+`worfklow_dispatch` doesn't work quite as expected. Clarification on how it's meant to be used should hopefully arrive soon-ish: https://github.community/t/error-in-docs-or-misunderstanding-for-workflow-dispatch-event/125066
