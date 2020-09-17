@@ -38,9 +38,7 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
         owner: GITHUB_OWNER,
         repo: repo,
         event_type: "riffraff",
-        client_payload: {
-          "gif-ref": vcsRevision
-        }
+        client_payload: { ref: vcsRevision }
       })
       .catch(err => {
         console.error("Octokit error:", err.message, err.status);

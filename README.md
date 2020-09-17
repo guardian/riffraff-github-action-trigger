@@ -28,6 +28,6 @@ jobs:
       - name: Update commit status
         uses: guardian/update-commit-status
         with:
-          ref: ${{ github.event.client_payload.git-ref }}
+          ref: ${{ github.event.client_payload.ref }}
 
 ```

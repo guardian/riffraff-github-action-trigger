@@ -10,10 +10,11 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
+      - run: echo ${{ github.event.client_payload }}
       - name: Clone Repository (Latest)
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.client_payload.git-ref }}
+          ref: ${{ github.event.client_payload.ref }}
       # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
       - name: Hello world
         uses: actions/hello-world-javascript-action@v1.1
@@ -23,10 +24,6 @@ jobs:
       # This step prints an output (time) from the previous step's action.
       - name: Echo the greeting's time
         run: echo 'The time was ${{ steps.hello.outputs.time }}.'
-#      - name: Update commit status
-#        uses: guardian/update-commit-status
-#        with:
-#          ref: ${{ github.event.client_payload.git-ref }}
       - name: Update commit status # You would run your tests before this using the output to set state/desc
         if: ${{ success() }}
         uses: Sibz/github-status-action@v1
@@ -36,8 +33,8 @@ jobs:
           description: 'BUILD_ID'
           state: 'success'
           target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions"
-          sha: ${{ github.event.client_payload.git-ref }}
-      - name: Upd ate commit status # You would run your tests before this using the output to set state/desc
+          sha: ${{ github.event.client_payload.ref }}
+      - name: Update commit status # You would run your tests before this using the output to set state/desc
         if: ${{ failure() }}
         uses: Sibz/github-status-action@v1
         with:
@@ -45,4 +42,4 @@ jobs:
           context: 'RiffRaff Deploy'
           description: 'BUILD_ID'
           state: 'failure'
-          sha: ${{ github.event.client_payload.git-ref }}
+          sha: ${{ github.event.client_payload.ref }}
