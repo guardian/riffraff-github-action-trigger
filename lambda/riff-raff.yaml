@@ -1,0 +1,19 @@
+regions: [eu-west-1]
+stacks: [flexible]
+deployments:
+  riffraff-github-action-trigger:
+    type: aws-lambda
+    parameters:
+      bucket: composer-dist
+      prefixStack: false
+      fileName: riffraff-github-action-trigger.zip
+      functionNames:
+       - "riffraff-github-action-trigger-function-"
+  cloudformation:
+    type: cloud-formation
+    app: riffraff-github-action-trigger
+    parameters:
+      prependStackToCloudFormationStackName: false
+      cloudFormationStackName: riffraff-github-action-trigger
+      templatePath: cfn.yml
+      cloudFormationStackByTags: false

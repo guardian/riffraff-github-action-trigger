@@ -4,6 +4,10 @@ Parameters:
   GitHubToken:
     Description: GitHub token with repo and workflow permissions
     Type: String
+    NoEcho: true
+  Stack:
+    Type: String
+    Description: Name of the stack
   Stage:
     Description: Stage
     Type: String
@@ -41,11 +45,6 @@ Resources:
                 Action:
                   - cloudwatch:PutMetricData
                 Resource: "*"
-              - Action:
-                  - s3:GetObject
-                Effect: Allow
-                Resource:
-                  - !Sub ['arn:aws:s3:::${ConfigBucket}/${Stage}/riffraff-github-action-trigger/conf.json', {Stage: !Ref 'Stage'}]
               - Resource: !Ref 'LoggingRoleToAssumeArn'
                 Effect: Allow
                 Action: sts:AssumeRole
@@ -57,15 +56,57 @@ Resources:
         Variables:
           GITHUB_TOKEN: !Ref GitHubToken
       Code:
-        S3Bucket: media-service-dist
-        S3Key: !Sub 'media-service/${Stage}/riffraff-github-action-trigger/riffraff-github-action-trigger.zip'
+        S3Bucket: composer-dist
+        S3Key: !Sub '${Stack}/${Stage}/riffraff-github-action-trigger/riffraff-github-action-trigger.zip'
       Description: Lambda triggering GitHub Actions from RiffRaff
       MemorySize: '256'
       Timeout: '30'
-      Handler: src/handler.handler
+      Handler: build/src/handler.handler
       Role: !GetAtt 'RiffRaffGitHubActionRole.Arn'
       Runtime: nodejs12.x
       Tags:
-        - { Key: Stack, Value: media-service }
+        - { Key: Stack, Value: !Ref Stack }
         - { Key: Stage, Value: !Ref Stage }
         - { Key: App, Value: riffraff-github-action-trigger }
+  ApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "RiffRaff GitHub Action API Gateway"
+      Description: "Gateway for RiffRaff to make POST requests to"
+
+  ApiGatewayRootMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations"
+          - lambdaArn: !GetAtt "RiffRaffGitHubActionLambdaFunction.Arn"
+      ResourceId: !GetAtt "ApiGateway.RootResourceId"
+      RestApiId: !Ref "ApiGateway"
+
+  ApiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn:
+      - "ApiGatewayRootMethod"
+    Properties:
+      RestApiId: !Ref "ApiGateway"
+      StageName: !Ref "Stage"
+
+  LambdaApiGatewayInvoke:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt "RiffRaffGitHubActionLambdaFunction.Arn"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/POST/"
+
+Outputs:
+  apiGatewayInvokeURL:
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+
+  lambdaArn:
+    Value: !GetAtt "RiffRaffGitHubActionLambdaFunction.Arn"

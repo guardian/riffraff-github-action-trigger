@@ -3,7 +3,6 @@ import { APIGatewayEvent } from "aws-lambda";
 import * as I from "./interfaces";
 import { lambdaResponse } from "./utils";
 
-const WORKFLOW_NAME = "riffraff.yml";
 const GITHUB_OWNER = "guardian";
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
@@ -13,6 +12,7 @@ interface RiffRaffHook {
   vcsRepo?: string;
   vcsUrl?: string;
   branch?: string;
+  build: string | number;
 }
 
 const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
@@ -22,7 +22,7 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
 
   try {
     const payload: RiffRaffHook = JSON.parse(event.body);
-    console.log(payload);
+    console.log("payload from RiffRaff:", payload);
     const { vcsRevision, vcsUrl } = payload;
     if (!vcsRevision || !vcsUrl) {
       throw new Error("No VCS revision and/or URL in payload, aborting");
@@ -34,18 +34,21 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
       `Sending workflow dispatch to ${repo} for revision ${vcsRevision}`
     );
 
-    octokit.actions
-      .createWorkflowDispatch({
+    const response = await octokit.repos
+      .createDispatchEvent({
         owner: GITHUB_OWNER,
         repo: repo,
-        ref: payload.vcsRevision as string,
-        workflow_id: (WORKFLOW_NAME as unknown) as number
+        event_type: "riffraff",
+        client_payload: { ref: vcsRevision, build: payload.build }
       })
-      .then(({ status, url }) =>
-        console.log(`Workflow dispatch status ${status} for URL ${url}`)
-      )
-      .catch(err => console.error("Error", err.message, err.status));
-    return lambdaResponse(200);
+      .catch(err => {
+        console.error("Octokit error:", err.message, err.status);
+        throw new Error(`Octokit error: ${err.message}`);
+      });
+
+    const { status, url, data } = response;
+    console.log(`Workflow dispatch status ${status} for URL ${url}`);
+    return lambdaResponse(status, JSON.stringify({ ...data, url, status }));
   } catch (e) {
     console.error("ERROR: ", e);
     return lambdaResponse(200, `Failed to handle payload: ${e.message}`);
