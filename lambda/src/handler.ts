@@ -13,6 +13,7 @@ interface RiffRaffHook {
   vcsUrl?: string;
   branch?: string;
   build: string | number;
+  deployer: string;
 }
 
 const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
@@ -23,9 +24,22 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
   try {
     const payload: RiffRaffHook = JSON.parse(event.body);
     console.log("payload from RiffRaff:", payload);
-    const { vcsRevision, vcsUrl } = payload;
-    if (!vcsRevision || !vcsUrl) {
-      throw new Error("No VCS revision and/or URL in payload, aborting");
+    const { vcsRevision, vcsUrl, deployer } = payload;
+    if (!vcsRevision || !vcsUrl || !deployer) {
+      console.error("Missing vcsRevision/vcsUrl/deployer", payload);
+      throw new Error("No VCS revision/URL/deployer in payload, aborting");
+    }
+
+    if (
+      ["scheduled deployment", "continuous deployment"].includes(
+        deployer.toLowerCase()
+      )
+    ) {
+      console.log(`Deploy comes from automated process, not triggering GHA`);
+      return lambdaResponse(
+        200,
+        `Deploy comes from automated process, not triggering GHA`
+      );
     }
 
     const arr = vcsUrl.split("/");
