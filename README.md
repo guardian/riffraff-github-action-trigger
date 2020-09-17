@@ -5,7 +5,7 @@
 
 Right now, you need to do 3 things to set this up:
 
-1. Set up a post-deploy `POST` hook to <INSERT API GATEWAY HERE> in RiffRaff with the following payload:
+1. Set up a post-deploy hook in RiffRaff with the following payload:
 
 RiffRaff payload: 
 ```json
