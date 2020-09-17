@@ -1,5 +1,7 @@
 name: Greet Everyone
-on: workflow_dispatch
+on:
+  repository_dispatch:
+    types: [riffraff]
 
 jobs:
   build:
@@ -8,8 +10,10 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
-      - name: Clone Repository
+      - name: Clone Repository (Latest)
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.client_payload.git-ref }}
       # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
       - name: Hello world
         uses: actions/hello-world-javascript-action@v1.1
@@ -19,3 +23,7 @@ jobs:
       # This step prints an output (time) from the previous step's action.
       - name: Echo the greeting's time
         run: echo 'The time was ${{ steps.hello.outputs.time }}.'
+#      - name: Update commit status
+#        uses: guardian/update-commit-status
+#        with:
+#          ref: ${{ github.event.client_payload.git-ref }}
