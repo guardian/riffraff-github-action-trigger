@@ -12,6 +12,7 @@ interface RiffRaffHook {
   vcsRepo?: string;
   vcsUrl?: string;
   branch?: string;
+  build: string | number;
 }
 
 const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
@@ -38,7 +39,7 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
         owner: GITHUB_OWNER,
         repo: repo,
         event_type: "riffraff",
-        client_payload: { ref: vcsRevision }
+        client_payload: { ref: vcsRevision, build: payload.build }
       })
       .catch(err => {
         console.error("Octokit error:", err.message, err.status);

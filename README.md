@@ -9,11 +9,7 @@ Right now, you need to do 3 things to set this up:
 
 RiffRaff payload: 
 ```json
-    {
-      "vcsUrl": "%deploy.tag.vcsUrl%",
-      "vcsRevision": "%deploy.tag.vcsRevision%",
-      "vcsRepo": "%deploy.tag.vcsRepo%"
-    }
+{"vcsUrl": "%deploy.tag.vcsUrl%", "vcsRevision": "%deploy.tag.vcsRevision%", "vcsRepo": "%deploy.tag.vcsRepo%", "branch": "%deploy.tag.branch%", "build": "%deploy.build%" }
 ```
 
 2. Set up a GitHub workflow in your repo (`$REPO_ROOT_DIR/.github/workflows`) with the following template:

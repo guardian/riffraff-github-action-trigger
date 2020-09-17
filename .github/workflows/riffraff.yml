@@ -29,7 +29,7 @@ jobs:
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'RiffRaff Deploy'
-          description: 'BUILD_ID'
+          description: ${{ github.event.client_payload.build }}
           state: 'success'
           target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions"
           sha: ${{ github.event.client_payload.ref }}
@@ -39,6 +39,6 @@ jobs:
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'RiffRaff Deploy'
-          description: 'BUILD_ID'
+          description: ${{ github.event.client_payload.build }}
           state: 'failure'
           sha: ${{ github.event.client_payload.ref }}
