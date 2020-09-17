@@ -27,3 +27,22 @@ jobs:
 #        uses: guardian/update-commit-status
 #        with:
 #          ref: ${{ github.event.client_payload.git-ref }}
+      - name: Update commit status # You would run your tests before this using the output to set state/desc
+        if: ${{ success() }}
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'RiffRaff Deploy'
+          description: 'BUILD_ID'
+          state: 'success'
+          target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions"
+          sha: ${{ github.event.client_payload.git-ref }}
+      - name: Upd ate commit status # You would run your tests before this using the output to set state/desc
+        if: ${{ failure() }}
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'Test run'
+          description: 'Passed'
+          state: 'success'
+          sha: ${{ github.event.client_payload.git-ref }}
