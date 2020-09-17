@@ -42,7 +42,7 @@ jobs:
         uses: Sibz/github-status-action@v1
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'Test run'
-          description: 'Passed'
-          state: 'success'
+          context: 'RiffRaff Deploy'
+          description: 'BUILD_ID'
+          state: 'failure'
           sha: ${{ github.event.client_payload.git-ref }}
