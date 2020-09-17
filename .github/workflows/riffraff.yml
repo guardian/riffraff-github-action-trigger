@@ -19,6 +19,7 @@ jobs:
           state: 'pending'
           target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           sha: ${{ github.event.client_payload.ref }}
+      - run: sleep 10
       - name: Clone Repository (Latest)
         uses: actions/checkout@v2
         with:
