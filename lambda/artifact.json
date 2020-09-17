@@ -1,6 +1,6 @@
 {
   "projectName": "Editorial Tools::Riffraff Github Action Trigger",
-  "vcsURL": "https://github.com/guardian/riffraff-github-action-trigger",
+  "vcsURL": "https://github.com/${{ github.repository }}",
   "actions": [
     {
       "action": "riffraff-github-action-trigger",

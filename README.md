@@ -45,7 +45,7 @@ jobs:
           context: 'RiffRaff Deploy'
           description: ${{ github.event.client_payload.build }}
           state: 'failure'
-          target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions/runs/${{ github.run_id }}"
+          target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           sha: ${{ github.event.client_payload.ref }}
 ```
 
