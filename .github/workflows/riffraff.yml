@@ -23,7 +23,7 @@ jobs:
       # This step prints an output (time) from the previous step's action.
       - name: Echo the greeting's time
         run: echo 'The time was ${{ steps.hello.outputs.time }}.'
-      - name: Update commit status # You would run your tests before this using the output to set state/desc
+      - name: Update commit status (success)
         if: ${{ success() }}
         uses: Sibz/github-status-action@v1
         with:
@@ -31,9 +31,9 @@ jobs:
           context: 'RiffRaff Deploy'
           description: ${{ github.event.client_payload.build }}
           state: 'success'
-          target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions"
+          target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions/runs/${{ github.run_id }}"
           sha: ${{ github.event.client_payload.ref }}
-      - name: Update commit status # You would run your tests before this using the output to set state/desc
+      - name: Update commit status (failure)
         if: ${{ failure() }}
         uses: Sibz/github-status-action@v1
         with:
@@ -41,4 +41,5 @@ jobs:
           context: 'RiffRaff Deploy'
           description: ${{ github.event.client_payload.build }}
           state: 'failure'
+          target_url: "https://github.com/guardian/riffraff-github-action-trigger/actions/runs/${{ github.run_id }}"
           sha: ${{ github.event.client_payload.ref }}
