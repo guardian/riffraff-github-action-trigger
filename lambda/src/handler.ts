@@ -29,7 +29,7 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
     }
 
     const arr = vcsUrl.split("/");
-    const repo = arr[arr.length - 1];
+    const repo = arr[arr.length - 1].replace(".git", "");
     const params = {
       owner: GITHUB_OWNER,
       repo: repo,
