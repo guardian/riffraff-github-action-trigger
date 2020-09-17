@@ -38,7 +38,7 @@ const handler = async (event: APIGatewayEvent): Promise<I.LambdaResponse> => {
       .createWorkflowDispatch({
         owner: GITHUB_OWNER,
         repo: repo,
-        ref: branch, // payload.vcsRevision as string,
+        ref: "master", // payload.vcsRevision as string,
         workflow_id: (WORKFLOW_NAME as unknown) as number,
         inputs: { "git-ref": vcsRevision }
       })
