@@ -10,7 +10,6 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ github.event.client_payload }}
       - name: Clone Repository (Latest)
         uses: actions/checkout@v2
         with:
