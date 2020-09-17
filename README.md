@@ -3,7 +3,7 @@
 
 ## How to use
 
-Right now, you need to do 3 things to set this up:
+Right now, you need to do 2 things to set this up:
 
 1. Set up a post-deploy hook in RiffRaff with the following payload:
 
@@ -66,8 +66,6 @@ jobs:
         target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         sha: ${{ github.event.client_payload.ref }}
 ```
-
-3. Add a secret to your repo called `GITHUB_TOKEN`. This will be used in the Workflow to grant permissions to update a commit status.
 
 ### Why not use `worfklow_dispatch`?
 
