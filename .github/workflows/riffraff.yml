@@ -1,5 +1,10 @@
 name: Greet Everyone
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      git-ref:
+        description: Git Ref
+        required: true
 
 jobs:
   build:
@@ -8,6 +13,10 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
+      - name: Clone Repository (Latest)
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.git-ref }}
       # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
       - name: Hello world
         uses: actions/hello-world-javascript-action@v1.1
