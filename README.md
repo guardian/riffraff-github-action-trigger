@@ -33,7 +33,7 @@ jobs:
     name: <NAME>
     runs-on: <RUNS_ON>
     steps:
-    - name: Update commit status (success)
+    - name: Update commit status (pending)
       uses: Sibz/github-status-action@v1
       with:
         authToken: ${{secrets.GITHUB_TOKEN}}
