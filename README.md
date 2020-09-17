@@ -33,27 +33,38 @@ jobs:
     name: <NAME>
     runs-on: <RUNS_ON>
     steps:
+    - name: Update commit status (success)
+      uses: Sibz/github-status-action@v1
+      with:
+        authToken: ${{secrets.GITHUB_TOKEN}}
+        context: 'RiffRaff Trigger'
+        description: ${{ github.event.client_payload.build }}
+        state: 'pending'
+        target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        sha: ${{ github.event.client_payload.ref }}
+    
       ... # YOUR JOBS HERE
-      - name: Update commit status (SUCCESS)
-        if: ${{ success() }}
-        uses: Sibz/github-status-action@v1
-        with:
-          authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'RiffRaff Deploy'
-          description: ${{ github.event.client_payload.build }}
-          state: 'success'
-          target_url: "https://github.com/guardian/<REPO>/actions"
-          sha: ${{ github.event.client_payload.ref }}
-      - name: Update commit status (FAILURE)
-        if: ${{ failure() }}
-        uses: Sibz/github-status-action@v1
-        with:
-          authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'RiffRaff Deploy'
-          description: ${{ github.event.client_payload.build }}
-          state: 'failure'
-          target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          sha: ${{ github.event.client_payload.ref }}
+
+    - name: Update commit status (SUCCESS)
+      if: ${{ success() }}
+      uses: Sibz/github-status-action@v1
+      with:
+        authToken: ${{secrets.GITHUB_TOKEN}}
+        context: 'RiffRaff Trigger'
+        description: ${{ github.event.client_payload.build }}
+        state: 'success'
+        target_url: "https://github.com/guardian/<REPO>/actions"
+        sha: ${{ github.event.client_payload.ref }}
+    - name: Update commit status (FAILURE)
+      if: ${{ failure() }}
+      uses: Sibz/github-status-action@v1
+      with:
+        authToken: ${{secrets.GITHUB_TOKEN}}
+        context: 'RiffRaff Trigger'
+        description: ${{ github.event.client_payload.build }}
+        state: 'failure'
+        target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        sha: ${{ github.event.client_payload.ref }}
 ```
 
 3. Add a secret to your repo called `GITHUB_TOKEN`. This will be used in the Workflow to grant permissions to update a commit status.

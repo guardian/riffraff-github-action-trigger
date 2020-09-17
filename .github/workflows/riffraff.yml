@@ -10,6 +10,15 @@ jobs:
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
+      - name: Update commit status (success)
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'RiffRaff Trigger'
+          description: ${{ github.event.client_payload.build }}
+          state: 'pending'
+          target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          sha: ${{ github.event.client_payload.ref }}
       - name: Clone Repository (Latest)
         uses: actions/checkout@v2
         with:
@@ -28,7 +37,7 @@ jobs:
         uses: Sibz/github-status-action@v1
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'RiffRaff Deploy'
+          context: 'RiffRaff Trigger'
           description: ${{ github.event.client_payload.build }}
           state: 'success'
           target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -38,7 +47,7 @@ jobs:
         uses: Sibz/github-status-action@v1
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'RiffRaff Deploy'
+          context: 'RiffRaff Trigger'
           description: ${{ github.event.client_payload.build }}
           state: 'failure'
           target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
