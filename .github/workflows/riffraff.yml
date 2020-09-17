@@ -1,11 +1,5 @@
 name: Greet Everyone
-on:
-  - workflow_dispatch:
-    inputs:
-      git-ref:
-        description: Git Ref
-        required: true
-  - repository_dispatch
+on: [repository_dispatch]
 
 jobs:
   build:
