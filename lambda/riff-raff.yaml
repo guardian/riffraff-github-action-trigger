@@ -4,7 +4,6 @@ deployments:
   riffraff-github-action-trigger:
     type: aws-lambda
     parameters:
-      bucket: composer-dist
       prefixStack: false
       fileName: riffraff-github-action-trigger.zip
       functionNames:
